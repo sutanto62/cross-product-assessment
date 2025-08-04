@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { PolarGrid, PolarAngleAxis, Radar, RadarChart } from "recharts";
 import { ClipboardCopy, Download } from 'lucide-react';
 
-import type { Product, AssessmentScores } from '@/types';
+import type { AssessmentScores } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from "@/hooks/use-toast";
 
 interface AssessmentResultsProps {
-  product: Product | null;
-  scores: AssessmentScores | null;
+  scores: Record<string, AssessmentScores> | null;
   suggestions: string | null;
   isLoading: boolean;
 }
@@ -26,25 +25,46 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function AssessmentResults({ product, scores, suggestions, isLoading }: AssessmentResultsProps) {
+export default function AssessmentResults({ scores, suggestions, isLoading }: AssessmentResultsProps) {
   const { toast } = useToast();
 
-  const chartData = useMemo(() => {
-    if (!scores) return [];
-    return [
-      { scope: "Business", score: scores.business },
-      { scope: "Technical", score: scores.technical },
-      { scope: "Hands-on", score: scores.handsOn },
-    ];
+  const aggregateScores = useMemo(() => {
+    if (!scores) return null;
+    
+    const productIds = Object.keys(scores);
+    const numProducts = productIds.length;
+    if (numProducts === 0) return { business: 0, technical: 0, handsOn: 0 };
+
+    const totalScores = productIds.reduce((acc, productId) => {
+        acc.business += scores[productId].business;
+        acc.technical += scores[productId].technical;
+        acc.handsOn += scores[productId].handsOn;
+        return acc;
+    }, { business: 0, technical: 0, handsOn: 0 });
+
+    return {
+        business: totalScores.business / numProducts,
+        technical: totalScores.technical / numProducts,
+        handsOn: totalScores.handsOn / numProducts,
+    };
   }, [scores]);
 
+  const chartData = useMemo(() => {
+    if (!aggregateScores) return [];
+    return [
+      { scope: "Business", score: aggregateScores.business },
+      { scope: "Technical", score: aggregateScores.technical },
+      { scope: "Hands-on", score: aggregateScores.handsOn },
+    ];
+  }, [aggregateScores]);
+
   const handleShare = () => {
-    if (!product || !scores) return;
-    const textToCopy = `My Skills Compass Assessment for ${product.name}:\n- Business: ${scores.business}/5\n- Technical: ${scores.technical}/5\n- Hands-on: ${scores.handsOn}/5`;
+    if (!aggregateScores) return;
+    const textToCopy = `My Aggregated Skills Compass Assessment:\n- Business: ${aggregateScores.business.toFixed(1)}/5\n- Technical: ${aggregateScores.technical.toFixed(1)}/5\n- Hands-on: ${aggregateScores.handsOn.toFixed(1)}/5`;
     navigator.clipboard.writeText(textToCopy);
     toast({
       title: "Copied to clipboard!",
-      description: "You can now share your assessment results.",
+      description: "You can now share your aggregated assessment results.",
     });
   };
   
@@ -55,35 +75,23 @@ export default function AssessmentResults({ product, scores, suggestions, isLoad
     });
   };
 
-  if (!product) {
-    return (
-      <Card className="min-h-[500px] flex items-center justify-center border-dashed">
-        <CardContent className="text-center">
-            <div className="text-5xl mb-4">🧭</div>
-            <p className="text-muted-foreground font-headline text-xl">Your journey awaits</p>
-            <p className="text-muted-foreground">Select a product to chart your skills.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   if (!scores) {
      return (
       <Card className="min-h-[500px] flex items-center justify-center border-dashed">
         <CardContent className="text-center">
           <p className="text-5xl mb-4">📊</p>
           <p className="text-muted-foreground font-headline text-xl">Ready for your results?</p>
-          <p className="text-muted-foreground">Complete your assessment and click "View My Assessment".</p>
+          <p className="text-muted-foreground">Complete your assessments and click the button to see your aggregate score.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="sticky top-8">
+    <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Your Assessment for {product.name}</CardTitle>
-        <CardDescription>Here's a visual breakdown of your self-assessed knowledge.</CardDescription>
+        <CardTitle className="font-headline">Your Aggregated Assessment</CardTitle>
+        <CardDescription>Here's a visual breakdown of your average scores across all products.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
