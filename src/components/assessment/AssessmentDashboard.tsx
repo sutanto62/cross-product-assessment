@@ -11,10 +11,13 @@ import AssessmentResults from './AssessmentResults';
 import ProductAssessmentCard from './ProductAssessmentCard';
 
 const MOCK_PRODUCTS: Product[] = [
-  { id: 'prod1', name: 'Firebase', description: 'Comprehensive app development platform.' },
-  { id: 'prod2', name: 'Google Cloud Run', description: 'Serverless container deployment.' },
-  { id: 'prod3', name: 'Next.js', description: 'The React framework for the web.' },
-  { id: 'prod4', name: 'Genkit', description: 'Go-to developer tool for building with generative AI.' },
+  { id: 'prod1', name: 'Agen', description: 'Manages agent network and performance.' },
+  { id: 'prod2', name: 'Duta', description: 'Brand ambassador and promotion platform.' },
+  { id: 'prod3', name: 'Estate', description: 'Platform for managing estates.' },
+  { id: 'prod4', name: 'Mitra', description: 'Partner relationship management.' },
+  { id: 'prod5', name: 'Petani', description: 'Tools and resources for farmers.' },
+  { id: 'prod6', name: 'Supir', description: 'Driver management and logistics.' },
+  { id: 'prod7', name: 'KebunPro', description: 'Professional plantation management suite.' },
 ];
 
 export default function AssessmentDashboard() {
