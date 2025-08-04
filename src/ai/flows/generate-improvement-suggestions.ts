@@ -19,6 +19,7 @@ const ProductAssessmentSchema = z.object({
 });
 
 const ImprovementSuggestionsInputSchema = z.object({
+  role: z.enum(['Frontend', 'Backend']).describe('The engineering role of the user.'),
   assessments: z.array(ProductAssessmentSchema).describe('An array of self-assessments for various products.'),
 });
 export type ImprovementSuggestionsInput = z.infer<typeof ImprovementSuggestionsInputSchema>;
@@ -38,7 +39,7 @@ const prompt = ai.definePrompt({
   name: 'improvementSuggestionsPrompt',
   input: {schema: ImprovementSuggestionsInputSchema},
   output: {schema: ImprovementSuggestionsOutputSchema},
-  prompt: `You are an AI assistant designed to provide personalized improvement suggestions to engineers based on an aggregate of their self-assessment scores across multiple products.
+  prompt: `You are an AI assistant designed to provide personalized improvement suggestions to a {{role}} engineer based on an aggregate of their self-assessment scores across multiple products.
 
   Here are the user's self-assessments:
   {{#each assessments}}
@@ -50,7 +51,7 @@ const prompt = ai.definePrompt({
 
   First, calculate the average score for each category (Business, Technical, Hands-on) across all products.
   
-  Then, based on these average scores, provide specific, actionable, and holistic suggestions for the engineer to improve their knowledge in each area. Focus on identifying cross-cutting themes and general skill areas rather than product-specific advice. The suggestions should be concise, high-level, and easy to follow. Structure the output as a single paragraph.
+  Then, based on these average scores and their role as a {{role}} engineer, provide specific, actionable, and holistic suggestions for the engineer to improve their knowledge in each area. Focus on identifying cross-cutting themes and general skill areas rather than product-specific advice. The suggestions should be concise, high-level, and easy to follow. Structure the output as a single paragraph.
   Suggestions:`,
 });
 

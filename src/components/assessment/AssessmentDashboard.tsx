@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import type { Product, AssessmentScores } from '@/types';
+import type { Product, AssessmentScores, EngineerRole } from '@/types';
 import { generateImprovementSuggestions } from '@/ai/flows/generate-improvement-suggestions';
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import AssessmentResults from './AssessmentResults';
 import ProductAssessmentCard from './ProductAssessmentCard';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const MOCK_PRODUCTS: Product[] = [
   { id: 'prod1', name: 'Agen', description: 'Manages agent network and performance.' },
@@ -27,6 +29,7 @@ export default function AssessmentDashboard() {
         return acc;
     }, {} as Record<string, AssessmentScores>)
   );
+  const [role, setRole] = useState<EngineerRole>('Frontend');
   const [submittedScores, setSubmittedScores] = useState<Record<string, AssessmentScores> | null>(null);
   const [suggestions, setSuggestions] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +62,7 @@ export default function AssessmentDashboard() {
 
     try {
       const result = await generateImprovementSuggestions({
+        role,
         assessments: productAssessments,
       });
       setSuggestions(result.suggestions);
@@ -77,6 +81,23 @@ export default function AssessmentDashboard() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
       <div className="flex flex-col gap-6">
+        <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">Your Role</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <RadioGroup value={role} onValueChange={(value: EngineerRole) => setRole(value)} className="flex space-x-4">
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Frontend" id="role-frontend" />
+                        <Label htmlFor="role-frontend">Frontend Engineer</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Backend" id="role-backend" />
+                        <Label htmlFor="role-backend">Backend Engineer</Label>
+                    </div>
+                </RadioGroup>
+            </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle className="font-headline">Product Assessments</CardTitle>

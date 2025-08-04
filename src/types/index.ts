@@ -9,3 +9,5 @@ export type AssessmentScores = {
   technical: number;
   handsOn: number;
 };
+
+export type EngineerRole = 'Frontend' | 'Backend';
