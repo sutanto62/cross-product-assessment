@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from 'react';
-import { PolarGrid, PolarAngleAxis, Radar, RadarChart } from "recharts";
+import { PolarGrid, PolarAngleAxis, Radar, RadarChart, PolarRadiusAxis } from "recharts";
 import { ClipboardCopy, Download } from 'lucide-react';
 
 import type { AssessmentScores } from '@/types';
@@ -95,10 +95,11 @@ export default function AssessmentResults({ scores, suggestions, isLoading }: As
       </CardHeader>
       <CardContent className="space-y-6">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
-          <RadarChart data={chartData} domain={[0, 5]}>
+          <RadarChart data={chartData}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
             <PolarAngleAxis dataKey="scope" />
             <PolarGrid />
+            <PolarRadiusAxis angle={90} domain={[0, 5]} tickCount={6} />
             <Radar
               dataKey="score"
               fill="var(--color-score)"
