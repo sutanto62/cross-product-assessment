@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Skills Compass',
+  title: 'Cross-product Assessment',
   description: 'A comprehensive cross-product assessment platform for engineers.',
 };
 

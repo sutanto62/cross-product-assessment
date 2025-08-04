@@ -60,7 +60,7 @@ export default function AssessmentResults({ scores, suggestions, isLoading }: As
 
   const handleShare = () => {
     if (!aggregateScores) return;
-    const textToCopy = `My Aggregated Skills Compass Assessment:\n- Business: ${aggregateScores.business.toFixed(1)}/5\n- Technical: ${aggregateScores.technical.toFixed(1)}/5\n- Hands-on: ${aggregateScores.handsOn.toFixed(1)}/5`;
+    const textToCopy = `My Aggregated Cross-product Assessment:\n- Business: ${aggregateScores.business.toFixed(1)}/5\n- Technical: ${aggregateScores.technical.toFixed(1)}/5\n- Hands-on: ${aggregateScores.handsOn.toFixed(1)}/5`;
     navigator.clipboard.writeText(textToCopy);
     toast({
       title: "Copied to clipboard!",

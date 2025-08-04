@@ -9,7 +9,7 @@ const Header: FC = () => {
             <a className="flex items-center gap-2" href="/">
                 <Compass className="h-8 w-8 text-primary" />
                 <h1 className="text-2xl font-bold font-headline text-primary">
-                    Skills Compass
+                    Cross-product Assessment
                 </h1>
             </a>
         </div>
