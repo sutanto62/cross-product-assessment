@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 
 interface AssessmentResultsProps {
   scores: Record<string, AssessmentScores> | null;
+  engineerName: string;
+  squadName: string;
   suggestions: string | null;
   isLoading: boolean;
 }
@@ -25,7 +27,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function AssessmentResults({ scores, suggestions, isLoading }: AssessmentResultsProps) {
+export default function AssessmentResults({ scores, engineerName, squadName, suggestions, isLoading }: AssessmentResultsProps) {
   const { toast } = useToast();
 
   const aggregateScores = useMemo(() => {
@@ -91,7 +93,9 @@ export default function AssessmentResults({ scores, suggestions, isLoading }: As
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">Your Aggregated Assessment</CardTitle>
-        <CardDescription>Here's a visual breakdown of your average scores across all products.</CardDescription>
+        <CardDescription>
+          For <span className="font-semibold text-primary">{engineerName}</span> from <span className="font-semibold text-primary">{squadName}</span> squad.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
@@ -108,6 +112,23 @@ export default function AssessmentResults({ scores, suggestions, isLoading }: As
             />
           </RadarChart>
         </ChartContainer>
+
+        {aggregateScores && (
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-sm text-muted-foreground">Business</p>
+              <p className="text-2xl font-bold">{aggregateScores.business.toFixed(1)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Technical</p>
+              <p className="text-2xl font-bold">{aggregateScores.technical.toFixed(1)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Hands-on</p>
+              <p className="text-2xl font-bold">{aggregateScores.handsOn.toFixed(1)}</p>
+            </div>
+          </div>
+        )}
         
         <Separator />
 

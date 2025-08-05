@@ -33,7 +33,11 @@ export default function AssessmentDashboard() {
   const [role, setRole] = useState<EngineerRole>('Frontend');
   const [engineerName, setEngineerName] = useState('');
   const [squadName, setSquadName] = useState('');
-  const [submittedScores, setSubmittedScores] = useState<Record<string, AssessmentScores> | null>(null);
+  const [submittedState, setSubmittedState] = useState<{
+    scores: Record<string, AssessmentScores>;
+    engineerName: string;
+    squadName: string;
+  } | null>(null);
   const [suggestions, setSuggestions] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -50,7 +54,7 @@ export default function AssessmentDashboard() {
 
   const handleGenerate = async () => {
     setIsLoading(true);
-    setSubmittedScores(scores);
+    setSubmittedState({ scores, engineerName, squadName });
     setSuggestions(null);
 
     const productAssessments = Object.entries(scores).map(([productId, productScores]) => {
@@ -91,11 +95,11 @@ export default function AssessmentDashboard() {
             <CardContent className="space-y-4">
                  <div className="space-y-2">
                     <Label htmlFor="engineer-name">Engineer Name</Label>
-                    <Input id="engineer-name" placeholder="e.g. Jane Doe" value={engineerName} onChange={(e) => setEngineerName(e.target.value)} />
+                    <Input id="engineer-name" placeholder="e.g. Bagus" value={engineerName} onChange={(e) => setEngineerName(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="squad-name">Squad Name</Label>
-                    <Input id="squad-name" placeholder="e.g. Phoenix" value={squadName} onChange={(e) => setSquadName(e.target.value)} />
+                    <Input id="squad-name" placeholder="e.g. Plasma" value={squadName} onChange={(e) => setSquadName(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                     <Label>Your Role</Label>
@@ -127,7 +131,7 @@ export default function AssessmentDashboard() {
             ))}
           </CardContent>
           <CardFooter className="flex-col items-stretch gap-4">
-              <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-primary hover:bg-primary/90 text-lg py-6">
+              <Button onClick={handleGenerate} disabled={isLoading || !engineerName || !squadName} className="w-full bg-primary hover:bg-primary/90 text-lg py-6">
                 {isLoading ? 'Generating...' : 'View My Aggregate Assessment'}
               </Button>
           </CardFooter>
@@ -135,7 +139,9 @@ export default function AssessmentDashboard() {
       </div>
       <div className="sticky top-8">
         <AssessmentResults
-          scores={submittedScores}
+          scores={submittedState?.scores ?? null}
+          engineerName={submittedState?.engineerName ?? ''}
+          squadName={submittedState?.squadName ?? ''}
           suggestions={suggestions}
           isLoading={isLoading}
         />
