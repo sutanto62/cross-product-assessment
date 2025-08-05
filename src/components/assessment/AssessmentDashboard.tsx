@@ -11,6 +11,7 @@ import AssessmentResults from './AssessmentResults';
 import ProductAssessmentCard from './ProductAssessmentCard';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
 
 const MOCK_PRODUCTS: Product[] = [
   { id: 'prod1', name: 'Agen', description: 'Manages agent network and performance.' },
@@ -30,6 +31,8 @@ export default function AssessmentDashboard() {
     }, {} as Record<string, AssessmentScores>)
   );
   const [role, setRole] = useState<EngineerRole>('Frontend');
+  const [engineerName, setEngineerName] = useState('');
+  const [squadName, setSquadName] = useState('');
   const [submittedScores, setSubmittedScores] = useState<Record<string, AssessmentScores> | null>(null);
   const [suggestions, setSuggestions] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -83,19 +86,30 @@ export default function AssessmentDashboard() {
       <div className="flex flex-col gap-6">
         <Card>
             <CardHeader>
-                <CardTitle className="font-headline">Your Role</CardTitle>
+                <CardTitle className="font-headline">Your Details</CardTitle>
             </CardHeader>
-            <CardContent>
-                <RadioGroup value={role} onValueChange={(value: EngineerRole) => setRole(value)} className="flex space-x-4">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Frontend" id="role-frontend" />
-                        <Label htmlFor="role-frontend">Frontend Engineer</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Backend" id="role-backend" />
-                        <Label htmlFor="role-backend">Backend Engineer</Label>
-                    </div>
-                </RadioGroup>
+            <CardContent className="space-y-4">
+                 <div className="space-y-2">
+                    <Label htmlFor="engineer-name">Engineer Name</Label>
+                    <Input id="engineer-name" placeholder="e.g. Jane Doe" value={engineerName} onChange={(e) => setEngineerName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="squad-name">Squad Name</Label>
+                    <Input id="squad-name" placeholder="e.g. Phoenix" value={squadName} onChange={(e) => setSquadName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                    <Label>Your Role</Label>
+                    <RadioGroup value={role} onValueChange={(value: EngineerRole) => setRole(value)} className="flex space-x-4 pt-2">
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Frontend" id="role-frontend" />
+                            <Label htmlFor="role-frontend">Frontend Engineer</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Backend" id="role-backend" />
+                            <Label htmlFor="role-backend">Backend Engineer</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
             </CardContent>
         </Card>
         <Card>
