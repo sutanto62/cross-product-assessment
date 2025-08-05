@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo } from 'react';
@@ -35,7 +36,7 @@ export default function AssessmentResults({ scores, engineerName, squadName, sug
     
     const productIds = Object.keys(scores);
     const numProducts = productIds.length;
-    if (numProducts === 0) return { business: 0, technical: 0, handsOn: 0 };
+    if (numProducts === 0) return { business: 0, technical: 0, handsOn: 0, average: 0 };
 
     const totalScores = productIds.reduce((acc, productId) => {
         acc.business += scores[productId].business;
@@ -44,11 +45,12 @@ export default function AssessmentResults({ scores, engineerName, squadName, sug
         return acc;
     }, { business: 0, technical: 0, handsOn: 0 });
 
-    return {
-        business: totalScores.business / numProducts,
-        technical: totalScores.technical / numProducts,
-        handsOn: totalScores.handsOn / numProducts,
-    };
+    const business = totalScores.business / numProducts;
+    const technical = totalScores.technical / numProducts;
+    const handsOn = totalScores.handsOn / numProducts;
+    const average = (business + technical + handsOn) / 3;
+
+    return { business, technical, handsOn, average };
   }, [scores]);
 
   const chartData = useMemo(() => {
@@ -62,7 +64,7 @@ export default function AssessmentResults({ scores, engineerName, squadName, sug
 
   const handleShare = () => {
     if (!aggregateScores) return;
-    const textToCopy = `My Aggregated Cross-product Assessment:\n- Business: ${aggregateScores.business.toFixed(1)}/5\n- Technical: ${aggregateScores.technical.toFixed(1)}/5\n- Hands-on: ${aggregateScores.handsOn.toFixed(1)}/5`;
+    const textToCopy = `My Aggregated Cross-product Assessment:\n- Business: ${aggregateScores.business.toFixed(1)}/5\n- Technical: ${aggregateScores.technical.toFixed(1)}/5\n- Hands-on: ${aggregateScores.handsOn.toFixed(1)}/5\n- Overall Average: ${aggregateScores.average.toFixed(1)}/5`;
     navigator.clipboard.writeText(textToCopy);
     toast({
       title: "Copied to clipboard!",
@@ -114,7 +116,7 @@ export default function AssessmentResults({ scores, engineerName, squadName, sug
         </ChartContainer>
 
         {aggregateScores && (
-          <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-4 gap-4 text-center">
             <div>
               <p className="text-sm text-muted-foreground">Business</p>
               <p className="text-2xl font-bold">{aggregateScores.business.toFixed(1)}</p>
@@ -126,6 +128,10 @@ export default function AssessmentResults({ scores, engineerName, squadName, sug
             <div>
               <p className="text-sm text-muted-foreground">Hands-on</p>
               <p className="text-2xl font-bold">{aggregateScores.handsOn.toFixed(1)}</p>
+            </div>
+            <div className="border-l border-border pl-4">
+                <p className="text-sm text-muted-foreground">Average</p>
+                <p className="text-2xl font-bold text-primary">{aggregateScores.average.toFixed(1)}</p>
             </div>
           </div>
         )}
